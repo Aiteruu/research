@@ -4,11 +4,11 @@ from loss import loss
 import tensorflow as tf 
 import os
 
-batch_size = 8
+batch_size = 4
 learning_rate = 0.0001
 epochs = 10
 
-length, data_generator = batch(8)
+length, data_generator = batch(batch_size)
 
 def get_compiled_model():
     model = Depth()
@@ -20,9 +20,8 @@ if not os.path.exists(checkpoint_dir):
     os.makedirs(checkpoint_dir)
 
 def make_or_restore_model():
-    checkpoints = [checkpoint_dir + "/" + name for name in os.listdir(checkpoint_dir)]
+    latest_checkpoint = tf.train.latest_checkpoint(checkpoint_dir)
     if checkpoints:
-        latest_checkpoint = max(checkpoints, key=os.path.getctime)
         print("Restoring from", latest_checkpoint)
         return keras.models.load_model(latest_checkpoint)
     print("Creating a new model")

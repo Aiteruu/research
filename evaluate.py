@@ -50,6 +50,8 @@ parsed = [parse(filenames[i], labels[i]) for i in range(length)]
 x = tf.convert_to_tensor([i[0] for i in parsed])
 y = tf.convert_to_tensor([i[1] for i in parsed])
 
+f = open("evaluate.txt", "w")
+
 for i in range(30):
     i=20
     path = "./ckpt2/{0:0=3d}.ckpt".format(i + 1)
@@ -57,6 +59,7 @@ for i in range(30):
     model = Depth()
     model.load_weights(path)
     y_pred = predict(model, x)
-    print(absolute_rel_error(y, y_pred))
-    print(error(y, y_pred))
-    break
+    e = error(y, y_pred)
+    f.write(i, e)
+    print(i, e)
+f.close()

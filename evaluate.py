@@ -30,10 +30,14 @@ def predict(model, images, min_depth=10, max_depth=1000, batch_size=2):
 
 def error(y_true, y_pred):
     threshold = np.maximum((y_true / y_pred), (y_pred / y_true))
-    a1 = (threshold < 1.25   ).mean()
+    print(threshold)
+    a1 = (threshold < 1.25     ).mean()
     a2 = (threshold < 1.25 ** 2).mean()
     a3 = (threshold < 1.25 ** 3).mean()
     return (a1, a2, a3)
+
+def absolute_rel_error(y_true, y_pred):
+    return tf.math.reduce_mean(tf.math.abs(y_true - y_pred) / y_true)
 
 csv = open('data/nyu2_test.csv', 'r').read()
 nyu2 = list((row.split(',') for row in (csv).split('\n') if len(row) > 0))
@@ -47,9 +51,12 @@ x = tf.convert_to_tensor([i[0] for i in parsed])
 y = tf.convert_to_tensor([i[1] for i in parsed])
 
 for i in range(30):
+    i=20
     path = "./ckpt2/{0:0=3d}.ckpt".format(i + 1)
     print(path)
     model = Depth()
     model.load_weights(path)
     y_pred = predict(model, x)
+    print(absolute_rel_error(y, y_pred))
     print(error(y, y_pred))
+    break

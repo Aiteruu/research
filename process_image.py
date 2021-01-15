@@ -19,17 +19,21 @@ def normalize(x, max_depth):
 
 def predict(model, images, min_depth=10, max_depth=1000, batch_size=1):
     if len(images.shape) < 3: images = np.stack((images,images,images), axis=2)
-    if len(images.shape) < 4: images = images.reshape((1, images.shape[0], images.shape[1], images.shape[2]))
+    if len(images.shape) < 4: images = np.reshape(images, (1, images.shape[0], images.shape[1], images.shape[2]))
     predictions = model.predict(images, batch_size=batch_size)
     return predictions
 
 filename = sys.argv[1].split('.')[0]
 
-i = 9
-path = "./ckpt2/{0:0=3d}.ckpt".format(i + 1)
-print(path)
-model = Depth()
-model.load_weights(path)
-y_pred = predict(model, parse('test/in/' + sys.argv[1]))
+for i in range(30):
+    path = "./ckpt2/{0:0=3d}.ckpt".format(i + 1)
+    print(path)
+    model = Depth()
+    model.load_weights(path)
+    y_pred = predict(model, parse('test/in/' + sys.argv[1]))
+    y_pred = np.squeeze(y_pred)
+    plt.imsave("sample/{}.png".format(i + 1), y_pred)
+    np.save("sample/{}.npy".format(i + 1), y_pred)
 
-plt.imsave('test/out/' + filename, tf.squeeze(y_pred))
+#np.save("pred.npy", tf.squeeze(y_pred))
+#plt.imsave('test/out/' + filename + '.png', tf.squeeze(y_pred))

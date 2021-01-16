@@ -1,10 +1,10 @@
 from model import Depth
-from data import batch
+from sidodpipeline import batch
 from loss import loss
 import tensorflow as tf 
 import os
 
-batch_size = 4
+batch_size = 20
 learning_rate = 0.0001
 epochs = 10
 

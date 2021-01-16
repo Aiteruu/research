@@ -1,8 +1,9 @@
 
+
 from tensorflow.keras.layers import Conv2D, UpSampling2D, LeakyReLU, Concatenate
 from tensorflow.keras import Model
 from tensorflow.keras.applications import DenseNet169
-#https://towardsdatascience.com/creating-a-trashy-model-from-scratch-with-tensorflow-2-an-example-with-an-anomaly-detection-27f0d1d7bd00
+
 class UpscaleBlock(Model):
     def __init__(self, filters):      
         super(UpscaleBlock, self).__init__()

@@ -3,6 +3,8 @@ import os
 from model import Depth
 from loss import loss
 import numpy as np
+from PIL import Image
+import matplotlib.pyplot as plt
 
 rgb_shape = (480, 640, 3)
 depth_shape = (240, 320, 1)
@@ -26,7 +28,7 @@ def predict(model, images, min_depth=10, max_depth=1000, batch_size=2):
 
     predictions = model.predict(images, batch_size=batch_size)
 
-    return np.clip(normalize(predictions, max_depth=1000), min_depth, max_depth) / max_depth
+    return predictions
 
 def error(y_true, y_pred):
     threshold = np.maximum((y_true / y_pred), (y_pred / y_true))
@@ -52,14 +54,17 @@ y = tf.convert_to_tensor([i[1] for i in parsed])
 
 f = open("evaluate.txt", "w")
 
+img = np.array(Image.open("test/in/test.png"), dtype="float32")
+
 for i in range(30):
-    i=20
     path = "./ckpt2/{0:0=3d}.ckpt".format(i + 1)
     print(path)
     model = Depth()
     model.load_weights(path)
-    y_pred = predict(model, x)
-    e = error(y, y_pred)
-    f.write(i, e)
-    print(i, e)
+    y_pred = predict(model, img)
+    #e = error(y, y_pred)
+    y_pred = np.squeeze(y_pred)
+    print(i)
+    plt.imsave("sample/{}.png".format(i + 1), y_pred)
+    np.save("sample/{}.npy".format(i + 1), y_pred)
 f.close()

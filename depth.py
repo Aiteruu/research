@@ -15,7 +15,7 @@ length, split, train, val = batch(batch_size)
 
 def get_compiled_model():
     model = Depth()
-    model.compile(loss=loss, optimizer=tf.keras.optimizers.Adam(lr=learning_rate, amsgrad=True), metrics)
+    model.compile(loss=loss, optimizer=tf.keras.optimizers.Adam(lr=learning_rate, amsgrad=True))
     return model
     
 checkpoint_dir = "./checkpoint/{}".format(NAME)

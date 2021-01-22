@@ -1,16 +1,7 @@
 import tensorflow as tf
 import random
 
-csv = open('dataset/train.csv', 'r').read()
-sidod = list((row.split(',') for row in (csv).split('\n') if len(row) > 0))
 
-rgb_shape = (960, 540, 3)
-depth_shape = (480, 270, 1)
-
-filenames = [i[0] for i in sidod]
-labels = [i[1] for i in sidod]
-
-length = len(labels)
 
 def parse(filename, label):
     image = tf.image.decode_png(tf.io.read_file('dataset/' + filename), channels=3)
@@ -33,6 +24,17 @@ def parse(filename, label):
     return image, depth
 
 def batch(batch_size):
+    csv = open('dataset/train.csv', 'r').read()
+    sidod = list((row.split(',') for row in (csv).split('\n') if len(row) > 0))
+
+    rgb_shape = (960, 540, 3)
+    depth_shape = (480, 270, 1)
+
+    filenames = [i[0] for i in sidod]
+    labels = [i[1] for i in sidod]
+
+    length = len(labels)
+    
     split = int(.8 * len(filenames))
     
     v = [i for i in range(length)]

@@ -1,13 +1,14 @@
 import tensorflow as tf
 import random
 
-rgb_shape = (960, 540, 3)
-depth_shape = (480, 270, 1)
-# rgb_shape = (480, 270, 3)
-# depth_shape = (240, 185, 1)
+# rgb_shape = (960, 540, 3)
+# depth_shape = (480, 270, 1)
+rgb_shape = (544, 960, 3)
+depth_shape = (272, 480, 1)
 
 def parse(filename, label):
     image = tf.image.decode_png(tf.io.read_file('dataset/' + filename), channels=3)
+    image = tf.image.resize(image, [rgb_shape[0], rgb_shape[1]])
     depth = tf.image.resize(tf.image.decode_png(tf.io.read_file('dataset/' + label), channels=1), [depth_shape[0], depth_shape[1]])
 
     image = tf.image.convert_image_dtype(image, dtype = tf.float32)

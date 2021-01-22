@@ -8,7 +8,6 @@ nyu2 = list((row.split(',') for row in (csv).split('\n') if len(row) > 0))
 filenames = [i[0] for i in nyu2]
 labels = [i[1] for i in nyu2]
 length = len(labels)
-dataset =  tf.data.Dataset.from_tensor_slices((filenames, labels))
 
 def parse(filename, label):
     image = tf.image.decode_jpeg(tf.io.read_file(filename))
@@ -21,6 +20,7 @@ def parse(filename, label):
 
 def batch(batch_size):
     dataset = tf.data.Dataset.from_tensor_slices((filenames, labels))
+    dataset = tf.random.shuffle(dataset)
     dataset = dataset.shuffle(buffer_size=length, reshuffle_each_iteration=True).repeat()
     dataset = dataset.map(map_func=parse, num_parallel_calls=tf.data.experimental.AUTOTUNE)
     return length, dataset.batch(batch_size=batch_size)

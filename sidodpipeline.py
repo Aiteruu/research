@@ -1,4 +1,5 @@
 import tensorflow as tf
+import random
 
 csv = open('dataset/train.csv', 'r').read()
 sidod = list((row.split(',') for row in (csv).split('\n') if len(row) > 0))
@@ -33,7 +34,11 @@ def parse(filename, label):
 
 def batch(batch_size):
     split = int(.8 * len(filenames))
-    dataset = tf.random.shuffle(dataset)
+    
+    v = [i for i in range(length)]
+    random.shuffle[v]
+    filenames = [filenames[i] for i in v]
+    labels = [labels[i] for i in v]
 
     filenames_train, filenames_val = filenames[:split], filenames[split:]
     labels_train, labels_val = labels[:split], labels[split:]

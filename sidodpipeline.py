@@ -32,8 +32,20 @@ def parse(filename, label):
     return image, depth
 
 def batch(batch_size):
-    dataset = tf.data.Dataset.from_tensor_slices((filenames, labels))
-    dataset = dataset.shuffle(buffer_size=length, reshuffle_each_iteration=True).repeat()
-    dataset = dataset.map(map_func=parse, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-    return length, dataset.batch(batch_size=batch_size)
+    split = int(.8 * len(filenames))
+    dataset = tf.random.shuffle(dataset)
+
+    filenames_train, filenames_val = filenames[:split], filenames[split:]
+    labels_train, labels_val = labels[:split], labels[split:]
+
+    dataset_train = tf.data.Dataset.from_tensor_slices((filenames_train, labels_train))
+    dataset_val = tf.data.Dataset.from_tensor_slices((filenames_val, labels_val))
+
+    dataset_train = dataset_train.shuffle(buffer_size=length, reshuffle_each_iteration=True).repeat()
+    dataset_val = dataset_val.shuffle(buffer_size=length, reshuffle_each_iteration=True).repeat()
+
+    dataset_train = dataset_train.map(map_func=parse, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    dataset_val = dataset_val.map(map_func=parse, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+
+    return length, split, dataset_train.batch(batch_size=batch_size), dataset_val.batch(batch_size=batch_size)
     

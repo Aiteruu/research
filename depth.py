@@ -11,11 +11,11 @@ epochs = 30
 NAME = "depth-sidod-cnn{}".format(int(time.time()))
 
 
-length, data_generator = batch(batch_size)
+length, split, train, val = batch(batch_size)
 
 def get_compiled_model():
     model = Depth()
-    model.compile(loss=loss, optimizer=tf.keras.optimizers.Adam(lr=learning_rate, amsgrad=True))
+    model.compile(loss=loss, optimizer=tf.keras.optimizers.Adam(lr=learning_rate, amsgrad=True), metrics)
     return model
     
 checkpoint_dir = "./checkpoint/{}".format(NAME)
@@ -41,5 +41,4 @@ callbacks = [
     model_checkpoint_callback
 ]
 
-
-model.fit(data_generator, epochs=epochs, callbacks=callbacks, validation_split=.2)
+model.fit(train, steps_per_epoch=split//batch_size, validation_data=val, validation_steps=(length-split)//batch_size, epochs=epochs, callbacks=callbacks)
